@@ -1,3 +1,5 @@
+package org.example;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.BufferedReader;
@@ -18,6 +20,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -100,12 +103,17 @@ public class Tests{
         //5 Prideti i krepseli nuskaitytas prekes
         List<String> productNames = readNames(testFileName);
         for (String productName : productNames) {
-            WebElement productElement = driver.findElement(By.xpath(String.format("//h2[@class = 'product-title']/a[text() = '%s']/../../div[@class='add-info']/div[@class='buttons']/input", productName)));
-            productElement.click();
             try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
+                WebElement productElement = driver.findElement(By.xpath(String.format("//h2[@class = 'product-title']/a[text() = '%s']/../../div[@class='add-info']/div[@class='buttons']/input", productName)));
+                productElement.click();
+            } catch (UnhandledAlertException e) {
+                Alert alert = driver.switchTo().alert();
+
+                System.out.println(alert.getText());
+                alert.dismiss();
+                driver.navigate().refresh();
+                WebElement productElement = driver.findElement(By.xpath(String.format("//h2[@class = 'product-title']/a[text() = '%s']/../../div[@class='add-info']/div[@class='buttons']/input", productName)));
+                productElement.click();
             }
         }
 
@@ -121,9 +129,10 @@ public class Tests{
         checkoutButton.click();
 
         //8 Billing address pasirinkimas ir continue
+
         try {
             driver.findElement(By.id("billing-address-select"));
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             Select select = new Select(driver.findElement(By.id("BillingNewAddress_CountryId")));
             select.selectByVisibleText("Lithuania");
             driver.findElement(By.id("BillingNewAddress_City")).sendKeys("test");
@@ -138,31 +147,21 @@ public class Tests{
             e.printStackTrace();
         }
 
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("new-address-next-step-button")));
         driver.findElement(By.className("new-address-next-step-button")).click();
         //9 Payment methods continue
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("payment-method-next-step-button")));
         driver.findElement(By.className("payment-method-next-step-button")).click();
         //10 Payment information continue
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("payment-info-next-step-button")));
         driver.findElement(By.className("payment-info-next-step-button")).click();
         //11 Confirm order continue
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("confirm-order-next-step-button")));
         driver.findElement(By.className("confirm-order-next-step-button")).click();
 
         //12 Isitikinti kad uzsakymas uzskaitytas
