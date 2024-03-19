@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.NoSuchElementException;
+import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -30,7 +31,6 @@ public class Tests{
     public static String password;
     public static WebDriver driver;
     public static JavascriptExecutor js;
-    public static WebDriverWait wait;
 
     //1 Atidaryti tinklalapi
     public static void initNewDriver() {
@@ -41,7 +41,6 @@ public class Tests{
         driver.manage().window().maximize();
         driver.get("https://demowebshop.tricentis.com/");
         js = (JavascriptExecutor) driver;
-//        wait = new WebDriverWait(driver, Time);
     }
     public static List<String> readNames(String fileName) {
         List<String> productNames = new ArrayList<>();
